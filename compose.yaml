@@ -1,0 +1,33 @@
+services:
+  web:
+    image: nginx:1.27.2
+    container_name: service-starter-web
+    restart: always
+    ports:
+      - 8000:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./public/index.php:/app/public/index.php
+    networks:
+      - service-starter-net
+      - docker-net
+
+  app:
+    build:
+      context: ./
+      target: dev
+    container_name: service-starter-app
+    restart: always
+    volumes:
+      - ./:/app
+    environment:
+      GITHUB_API_TOKEN: ${GITHUB_API_TOKEN}
+    networks:
+      - service-starter-net
+      - docker-net
+
+networks:
+  service-starter-net:
+    driver: 'bridge'
+  docker-net:
+    external: true
